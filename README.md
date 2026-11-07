@@ -17,3 +17,10 @@ Then open http://localhost:8000. The processed data is at `/data.json`.
 The log lives at `data/mpg_tracking.csv`. Edit or replace that file and refresh
 the page; the server re-reads it when it changes. To use a file somewhere else,
 set `FUEL_CSV` to its path before starting the server.
+
+## Deployment
+
+Pushing to the `deployment` branch publishes a static copy to GitHub Pages via
+`.github/workflows/deploy.yml`. The workflow runs `python -m backend.build_static`,
+which copies `frontend/` and pre-computes `data.json` from the CSV. The data is
+fixed at build time, so push again (or re-run the workflow) after editing the CSV.

@@ -881,7 +881,7 @@ function bindControls() {
 async function start() {
   bindControls();
   try {
-    const response = await fetch("/data.json");
+    const response = await fetch("data.json");
     if (!response.ok) {
       const problem = await response.json().catch(() => ({}));
       throw new Error(problem.detail ?? `The server returned ${response.status}.`);
