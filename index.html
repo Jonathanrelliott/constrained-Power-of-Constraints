@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fuel stats</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="rail">
+    <a class="logo" href="#overview" aria-label="Fuel stats home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 12 5M11 19l7-14M17 19l3-6" /></svg>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#overview" data-section="overview" aria-label="Overview" title="Overview">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2" /><rect x="13" y="4" width="7" height="7" rx="2" /><rect x="4" y="13" width="7" height="7" rx="2" /><rect x="13" y="13" width="7" height="7" rx="2" /></svg>
+      </a>
+      <a href="#telemetry" data-section="telemetry" aria-label="Telemetry" title="Telemetry">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h4l3-7 4 13 3-6h4" /></svg>
+      </a>
+      <a href="#projections" data-section="projections" aria-label="Projections" title="Projections">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 10 12l4 3 6-8" /><path d="M15 7h5v5" /></svg>
+      </a>
+      <a href="#log" data-section="log" aria-label="Fill-up log" title="Fill-up log">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12" /><path d="M4 6h.01M4 12h.01M4 18h.01" /></svg>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1>Fuel stats</h1>
+        <p id="subtitle" class="muted">Loading fuel log…</p>
+      </div>
+      <div class="range" role="group" aria-label="Date range">
+        <button type="button" data-range="all" aria-pressed="true">All time</button>
+        <button type="button" data-range="3y" aria-pressed="false">3 years</button>
+        <button type="button" data-range="1y" aria-pressed="false">1 year</button>
+      </div>
+    </header>
+
+    <div id="banner" class="banner" role="alert" hidden></div>
+
+    <section id="overview" class="overview" aria-label="Overview">
+      <div class="overview-main">
+        <article class="panel hero">
+          <div class="hero-head">
+            <div>
+              <h2>Fuel economy by season</h2>
+              <p class="hero-figure"><span id="hero-mpg">–</span> <small>MPG</small></p>
+              <p id="hero-note" class="muted"></p>
+            </div>
+            <div class="pump-card">
+              <div>
+                <h3>Pump price</h3>
+                <p id="pump-value" class="pump-value">–</p>
+                <p id="pump-note" class="muted"></p>
+              </div>
+              <span class="round-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14M4 20h12M8 9h4M15 11h2a2 2 0 0 1 2 2v3a1.5 1.5 0 0 0 3 0V9l-3-3" /></svg>
+              </span>
+            </div>
+          </div>
+          <div id="chart-bubbles" class="chart"></div>
+          <div class="hero-foot">
+            <p class="muted">Bubble size shows miles driven.</p>
+            <ul id="season-legend" class="legend"></ul>
+          </div>
+        </article>
+
+        <div class="tiles">
+          <article class="tile tile-a">
+            <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 21 10 3M18 21 14 3M12 6v2M12 11v2M12 16v2" /></svg></span>
+            <h3>Miles driven</h3>
+            <p id="tile-miles" class="tile-value">–</p>
+            <p id="tile-miles-note" class="tile-note"></p>
+          </article>
+          <article class="tile tile-b">
+            <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12Z" /></svg></span>
+            <h3>Gallons burned</h3>
+            <p id="tile-gallons" class="tile-value">–</p>
+            <p id="tile-gallons-note" class="tile-note"></p>
+          </article>
+          <article class="tile tile-c">
+            <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M17 7c-1-1.5-3-2-5-2-3 0-5 1.5-5 3.5S9 12 12 12s5 1.5 5 3.5S15 19 12 19c-2 0-4-.5-5-2" /></svg></span>
+            <h3>Tracked spend</h3>
+            <p id="tile-spend" class="tile-value">–</p>
+            <p id="tile-spend-note" class="tile-note"></p>
+          </article>
+          <article class="tile tile-d">
+            <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2" /><circle cx="12" cy="12" r="9" /></svg></span>
+            <h3>Miles per day</h3>
+            <p id="tile-mpd" class="tile-value">–</p>
+            <p id="tile-mpd-note" class="tile-note"></p>
+          </article>
+        </div>
+
+        <div class="lower">
+          <div class="minis">
+            <div class="mini"><span class="mini-label">Cost per mile</span><span id="mini-cpm" class="mini-value">–</span></div>
+            <div class="mini"><span class="mini-label">Avg days per fill</span><span id="mini-gap" class="mini-value">–</span></div>
+            <div class="mini"><span class="mini-label">Best tank</span><span id="mini-best" class="mini-value">–</span></div>
+            <div class="mini"><span class="mini-label">Worst tank</span><span id="mini-worst" class="mini-value">–</span></div>
+            <div class="mini mini-wide"><span class="mini-label">Saved with discounts</span><span id="mini-saved" class="mini-value">–</span></div>
+          </div>
+          <article class="panel spark">
+            <h3>Miles per day, 90-day average</h3>
+            <div id="chart-mpd" class="chart"></div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="panel timeline" aria-label="Fill-up timeline">
+        <div class="timeline-head">
+          <span id="timeline-page" class="page-chip">1</span>
+          <button id="timeline-prev" type="button" class="icon-button" aria-label="Newer fill-ups">‹</button>
+          <button id="timeline-next" type="button" class="icon-button" aria-label="Older fill-ups">›</button>
+          <span id="timeline-label" class="timeline-label"></span>
+        </div>
+        <ol id="timeline-list" class="timeline-list"></ol>
+        <a class="fab" href="#log" aria-label="Open the full fill-up log">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        </a>
+      </aside>
+    </section>
+
+    <section id="telemetry" class="section" aria-labelledby="telemetry-title">
+      <h2 id="telemetry-title" class="section-title">Driving telemetry</h2>
+      <div class="grid-telemetry">
+        <article class="panel wide">
+          <h3>MPG, tank by tank</h3>
+          <ul class="legend inline">
+            <li><span class="key key-dot"></span>Single tank</li>
+            <li><span class="key key-line"></span>5-tank average</li>
+            <li><span class="key key-flag"></span>Excluded tank</li>
+          </ul>
+          <div id="chart-tanks" class="chart"></div>
+        </article>
+        <article class="panel">
+          <h3>MPG by month of year</h3>
+          <div id="chart-months" class="chart"></div>
+        </article>
+        <article class="panel insights-panel">
+          <h3>Lifetime insights</h3>
+          <ul id="insights" class="insights"></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="projections" class="section" aria-labelledby="projections-title">
+      <h2 id="projections-title" class="section-title">Next 90 days</h2>
+      <p class="muted section-note">Projections always use the full log. The date range above does not change them.</p>
+      <div id="forecast-cards" class="forecast-cards"></div>
+      <div class="grid-projection">
+        <article class="panel">
+          <h3>Pump price and 60-day trend</h3>
+          <ul class="legend inline">
+            <li><span class="key key-dot"></span>Pump price</li>
+            <li><span class="key key-line"></span>60-day average</li>
+            <li><span class="key key-dash"></span>Projected trend</li>
+            <li><span class="key key-band"></span>80% range</li>
+          </ul>
+          <div id="chart-price" class="chart"></div>
+        </article>
+        <article class="panel">
+          <h3>Spend per 30 days</h3>
+          <ul class="legend inline">
+            <li><span class="key key-bar"></span>Actual</li>
+            <li><span class="key key-bar-soft"></span>Projected, with price range</li>
+            <li><span class="key key-rule"></span><span id="spend-average"></span></li>
+          </ul>
+          <div id="chart-spend" class="chart"></div>
+        </article>
+      </div>
+      <article class="panel method">
+        <h3>How to read these numbers</h3>
+        <ul id="method" class="method-list"></ul>
+      </article>
+    </section>
+
+    <section id="log" class="section" aria-labelledby="log-title">
+      <h2 id="log-title" class="section-title">Fill-up log</h2>
+      <article class="panel quality">
+        <h3>Data corrections</h3>
+        <ul id="quality" class="quality-list"></ul>
+      </article>
+      <article class="panel table-panel">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Fill-up log table">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col" class="num">Gallons</th>
+                <th scope="col" class="num">Miles</th>
+                <th scope="col" class="num">MPG</th>
+                <th scope="col" class="num">Days</th>
+                <th scope="col" class="num">Mi/day</th>
+                <th scope="col" class="num">Spent</th>
+                <th scope="col" class="num">$/gal</th>
+                <th scope="col">Note</th>
+              </tr>
+            </thead>
+            <tbody id="log-body"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div id="tooltip" class="tooltip" role="status" hidden></div>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

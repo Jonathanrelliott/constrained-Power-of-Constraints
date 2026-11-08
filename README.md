@@ -20,7 +20,10 @@ set `FUEL_CSV` to its path before starting the server.
 
 ## Deployment
 
-Pushing to the `deployment` branch publishes a static copy to GitHub Pages via
-`.github/workflows/deploy.yml`. The workflow runs `python -m backend.build_static`,
-which copies `frontend/` and pre-computes `data.json` from the CSV. The data is
-fixed at build time, so push again (or re-run the workflow) after editing the CSV.
+GitHub Pages serves this branch (`deployment`) from its root, so the site files
+live there: `index.html`, `app.js`, `style.css`, and a pre-computed `data.json`.
+They are copies of `frontend/` plus the processed CSV. After editing the CSV or
+anything in `frontend/`, regenerate them and push:
+
+    python -m backend.build_static
+    git add -A && git commit -m "Update site" && git push
